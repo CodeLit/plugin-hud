@@ -3,7 +3,7 @@ import * as Athena from '@AthenaServer/api';
 import { HUD_EVENTS } from '../shared/events';
 import { HUDController } from './src/controller';
 
-Athena.systems.plugins.registerPlugin('HUD', () => {});
+Athena.systems.plugins.registerPlugin('HUD', async () => {});
 
 Athena.player.events.on('selected-character', (player: alt.Player) => {
     alt.emitClient(player, HUD_EVENTS.OPEN_HUD);
