@@ -79,6 +79,8 @@ let isInVehicle = ref(false);
 onMounted(() => {
     updateTime();
     setInterval(updateTime, 1000);
+
+    WebViewEvents.emitServer(HUD_EVENTS.REQUEST_DATA, updateData);
 });
 
 WebViewEvents.on(HUD_EVENTS.UPDATE_HUD, updateData);

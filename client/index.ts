@@ -9,41 +9,7 @@ const isMetric = native.getProfileSetting(227);
 let speedCalc: string;
 
 function init() {
-    const page = new AthenaClient.webview.Page({
-        name: 'HUD',
-        callbacks: {
-            onReady: async () => {},
-            onClose: () => {},
-        },
-        options: {
-            onOpen: {
-                focus: false,
-                hideHud: false,
-                hideOverlays: false,
-                setIsMenuOpenToTrue: false,
-                showCursor: false,
-                disableControls: 'none',
-                disablePauseMenu: false,
-                forceOpen: true,
-            },
-            onClose: {
-                showOverlays: false,
-            },
-            disableEscapeKey: true,
-        },
-    });
-
-    alt.onServer(HUD_EVENTS.OPEN_HUD, () => {
-        if (typeof page !== 'undefined') {
-            page.open();
-        }
-    });
-
-    alt.onServer(HUD_EVENTS.CLOSE_HUD, () => {
-        if (typeof page !== 'undefined') {
-            page.close(true);
-        }
-    });
+    AthenaClient.webview.registerOverlay('HUD', (isVisible: boolean) => {});
 }
 
 onTicksStart.add(init);

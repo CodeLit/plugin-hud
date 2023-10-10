@@ -3,12 +3,14 @@ import * as alt from 'alt-server';
 
 import { HUDConfig } from '@AthenaPlugins/plugin-hud/shared/config';
 import { HUDController } from './controller';
+import { HUD_EVENTS } from '@AthenaPlugins/plugin-hud/shared/events';
 
-Athena.player.events.on('selected-character', (player: alt.Player) => {
-    HUDController.openHUD(player);
-    setTimeout(() => {
-        HUDController.updateHUD(player);
-    }, 1500);
+alt.onClient(HUD_EVENTS.REQUEST_DATA, (player: alt.Player) => {
+    HUDController.updateHUD(player);
+
+    if (player.vehicle) {
+        HUDController.updateVehicleHUD(player, player.vehicle, false);
+    }
 });
 
 Athena.document.character.onChange('armour', (player: alt.Player, _value: number, _oldValue: number) => {
@@ -17,14 +19,10 @@ Athena.document.character.onChange('armour', (player: alt.Player, _value: number
 
 Athena.document.character.onChange('cash', (player: alt.Player, _value: number, _oldValue: number) => {
     HUDController.updateHUD(player);
-
-    alt.logWarning(`Changed Cash`);
 });
 
 Athena.document.character.onChange('bank', (player: alt.Player, _value: number, _oldValue: number) => {
     HUDController.updateHUD(player);
-
-    alt.logWarning(`Changed Bank`);
 });
 
 Athena.document.character.onChange('dimension', (player: alt.Player, _value: number, _oldValue: number) => {
@@ -56,7 +54,7 @@ if (HUDConfig.useFuelPlugin) {
         const player = Athena.getters.player.byDatabaseID(vehData.owner.toString());
         if (!player) {
             alt.logWarning(`Couldn't find player with ID: ${vehData.owner}!`);
-        } else {
+        } else if (player?.vehicle) {
             HUDController.updateVehicleHUD(player, vehicle, false);
         }
     });

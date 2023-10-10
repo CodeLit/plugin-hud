@@ -4,4 +4,5 @@ export const enum HUD_EVENTS {
     UPDATE_HUD = 'HUD:update-hud',
     UPDATE_VEHICLE = 'HUD:update-vehicle',
     UPDATE_SPEED = 'HUD:update-speed',
+    REQUEST_DATA = 'HUD:request-data',
 }
