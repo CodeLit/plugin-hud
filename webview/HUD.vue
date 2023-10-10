@@ -45,7 +45,7 @@
 
         <div class="hud-item">
             <div class="hud-label"><Icon icon="icon-clock" :size="24"></Icon></div>
-            <div class="hud-value">{{ currentTime }}</div>
+            <div class="hud-value">{{ currentTime }} | {{ currentPlayTime }}h</div>
         </div>
 
         <div class="hud-item">
@@ -74,6 +74,8 @@ let cashBalance = ref(0);
 let dimension = ref(0);
 let speed = ref('0');
 let currentTime = ref('');
+let currentPlayTime = ref('0');
+
 let isInVehicle = ref(false);
 
 onMounted(() => {
@@ -103,6 +105,8 @@ function updateData(data: Character) {
     bankBalance.value = data.bank;
     cashBalance.value = data.cash;
     dimension.value = data.dimension;
+
+    currentPlayTime.value = data.hours.toFixed(2);
 }
 
 function updateVehicleData(veh: OwnedVehicle, remove: boolean) {

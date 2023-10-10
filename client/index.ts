@@ -9,7 +9,7 @@ const isMetric = native.getProfileSetting(227);
 let speedCalc: string;
 
 function init() {
-    AthenaClient.webview.registerOverlay('HUD', (isVisible: boolean) => {});
+    AthenaClient.webview.registerOverlay('HUD');
 }
 
 onTicksStart.add(init);
@@ -20,4 +20,8 @@ alt.everyTick(() => {
 
     speedCalc = (currentSpeed * (isMetric ? 3.6 : 2.236936)).toFixed(0);
     AthenaClient.webview.emit(HUD_EVENTS.UPDATE_SPEED, speedCalc);
+});
+
+alt.on('keyup', (key: number) => {
+    AthenaClient.webview.setOverlayVisible('HUD', true);
 });

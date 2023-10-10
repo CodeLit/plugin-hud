@@ -4,21 +4,16 @@ import * as Athena from '@AthenaServer/api';
 import { HUDController } from './controller';
 
 const HUDFunctions = {
-    openHUD,
-    closeHUD,
     updateHUD,
+    updateVehicleHUD,
 };
-
-function openHUD(player: alt.Player) {
-    return HUDController.openHUD(player);
-}
-
-function closeHUD(player: alt.Player) {
-    return HUDController.closeHUD(player);
-}
 
 function updateHUD(player: alt.Player) {
     return HUDController.updateHUD(player);
+}
+
+function updateVehicleHUD(player: alt.Player, veh: alt.Vehicle, remove: boolean) {
+    return HUDController.updateVehicleHUD(player, veh, remove);
 }
 
 Athena.systems.plugins.addAPI('HUD', HUDFunctions);
