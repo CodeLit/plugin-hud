@@ -7,17 +7,24 @@
             </div>
         </div>
 
-        <div class="hud-item">
+        <div class="hud-item" v-if="HUDConfig.useFoodPlugin">
             <div class="hud-label"><Icon icon="icon-sliced-bread" :size="24"></Icon></div>
             <div class="hud-progress">
                 <div class="hud-progress-inner" :style="{ width: foodPercentage + '%' }"></div>
             </div>
         </div>
 
-        <div class="hud-item">
+        <div class="hud-item" v-if="HUDConfig.useFoodPlugin">
             <div class="hud-label"><Icon icon="icon-soda-bottle" :size="24"></Icon></div>
             <div class="hud-progress">
                 <div class="hud-progress-inner" :style="{ width: thirstPercentage + '%' }"></div>
+            </div>
+        </div>
+
+        <div class="hud-item" v-if="HUDConfig.useFuelPlugin && isInVehicle">
+            <div class="hud-label"><Icon icon="icon-local_gas_station" :size="24"></Icon></div>
+            <div class="hud-progress">
+                <div class="hud-progress-inner" :style="{ width: vehicleFuel + '%' }"></div>
             </div>
         </div>
 
@@ -52,18 +59,22 @@
 import { onMounted, ref } from 'vue';
 import WebViewEvents from '@utility/webViewEvents';
 import { HUD_EVENTS } from '../shared/events';
+import { HUDConfig } from '../shared/config';
 import Icon from '@/components/Icon.vue';
 import { Character } from '@AthenaShared/interfaces/character';
+import { OwnedVehicle } from '@AthenaShared/interfaces/vehicleOwned';
 
 let armorPercentage = ref(100);
 let foodPercentage = ref(75);
 let thirstPercentage = ref(50);
+let vehicleFuel = ref(0);
 
 let bankBalance = ref(0);
 let cashBalance = ref(0);
 let dimension = ref(0);
 let speed = ref('0');
 let currentTime = ref('');
+let isInVehicle = ref(false);
 
 onMounted(() => {
     updateTime();
@@ -71,6 +82,7 @@ onMounted(() => {
 });
 
 WebViewEvents.on(HUD_EVENTS.UPDATE_HUD, updateData);
+WebViewEvents.on(HUD_EVENTS.UPDATE_VEHICLE, updateVehicleData);
 WebViewEvents.on(HUD_EVENTS.UPDATE_SPEED, updateSpeed);
 
 function updateTime() {
@@ -89,8 +101,15 @@ function updateData(data: Character) {
     bankBalance.value = data.bank;
     cashBalance.value = data.cash;
     dimension.value = data.dimension;
+}
 
-    console.log(`HUD-Data was updated`);
+function updateVehicleData(veh: OwnedVehicle, remove: boolean) {
+    if (remove) {
+        isInVehicle.value = false;
+    } else {
+        isInVehicle.value = true;
+        vehicleFuel.value = veh.fuel;
+    }
 }
 
 function updateSpeed(speedClient: string) {
