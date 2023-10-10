@@ -4,8 +4,18 @@ import * as Athena from '@AthenaServer/api';
 import { HUDController } from './controller';
 
 const HUDFunctions = {
+    openHUD,
+    closeHUD,
     updateHUD,
 };
+
+function openHUD(player: alt.Player) {
+    return HUDController.openHUD(player);
+}
+
+function closeHUD(player: alt.Player) {
+    return HUDController.closeHUD(player);
+}
 
 function updateHUD(player: alt.Player) {
     return HUDController.updateHUD(player);

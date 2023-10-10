@@ -1,20 +1,49 @@
 <template>
     <div class="hud">
         <div class="hud-item">
-            <div class="hud-label">Bank <Icon icon="icon-bank" :size="24" /></div>
+            <div class="hud-label"><Icon icon="icon-trench-body-armor" :size="24"></Icon></div>
+            <div class="hud-progress">
+                <div class="hud-progress-inner" :style="{ width: armorPercentage + '%' }"></div>
+            </div>
+        </div>
+
+        <div class="hud-item">
+            <div class="hud-label"><Icon icon="icon-sliced-bread" :size="24"></Icon></div>
+            <div class="hud-progress">
+                <div class="hud-progress-inner" :style="{ width: foodPercentage + '%' }"></div>
+            </div>
+        </div>
+
+        <div class="hud-item">
+            <div class="hud-label"><Icon icon="icon-soda-bottle" :size="24"></Icon></div>
+            <div class="hud-progress">
+                <div class="hud-progress-inner" :style="{ width: thirstPercentage + '%' }"></div>
+            </div>
+        </div>
+
+        <div class="hud-item">
+            <div class="hud-label"><Icon icon="icon-bank" :size="24" /></div>
             <div class="hud-value">{{ formatNumberWithThousandsSeparator(bankBalance) }}$</div>
         </div>
+
         <div class="hud-item">
-            <div class="hud-label">Cash <Icon icon="icon-cash" :size="24" /></div>
+            <div class="hud-label"><Icon icon="icon-cash" :size="24" /></div>
             <div class="hud-value">{{ formatNumberWithThousandsSeparator(cashBalance) }}$</div>
         </div>
+
         <div class="hud-item">
-            <div class="hud-label">Speed <Icon icon="icon-speed" :size="24"></Icon></div>
-            <div class="hud-value">{{ speed }} km/h</div>
+            <div class="hud-label"><Icon icon="icon-world" :size="24" /></div>
+            <div class="hud-value">{{ dimension }}</div>
         </div>
+
         <div class="hud-item">
-            <div class="hud-label">Time <Icon icon="icon-clock" :size="24"></Icon></div>
+            <div class="hud-label"><Icon icon="icon-clock" :size="24"></Icon></div>
             <div class="hud-value">{{ currentTime }}</div>
+        </div>
+
+        <div class="hud-item">
+            <div class="hud-label"><Icon icon="icon-speed" :size="24"></Icon></div>
+            <div class="hud-value">{{ speed }} km/h</div>
         </div>
     </div>
 </template>
@@ -24,19 +53,25 @@ import { onMounted, ref } from 'vue';
 import WebViewEvents from '@utility/webViewEvents';
 import { HUD_EVENTS } from '../shared/events';
 import Icon from '@/components/Icon.vue';
+import { Character } from '@AthenaShared/interfaces/character';
+
+let armorPercentage = ref(100);
+let foodPercentage = ref(75);
+let thirstPercentage = ref(50);
 
 let bankBalance = ref(0);
 let cashBalance = ref(0);
-let speed = ref('');
+let dimension = ref(0);
+let speed = ref('0');
 let currentTime = ref('');
 
 onMounted(() => {
-    WebViewEvents.on(HUD_EVENTS.UPDATE_HUD, updateData);
-    WebViewEvents.on(HUD_EVENTS.UPDATE_SPEED, updateSpeed);
-
     updateTime();
     setInterval(updateTime, 1000);
 });
+
+WebViewEvents.on(HUD_EVENTS.UPDATE_HUD, updateData);
+WebViewEvents.on(HUD_EVENTS.UPDATE_SPEED, updateSpeed);
 
 function updateTime() {
     const now = new Date();
@@ -46,9 +81,16 @@ function updateTime() {
     currentTime.value = `${hours}:${minutes}:${seconds}`;
 }
 
-function updateData(bank: number, cash: number) {
-    bankBalance.value = bank;
-    cashBalance.value = cash;
+function updateData(data: Character) {
+    armorPercentage.value = data.armour;
+    foodPercentage.value = data.food;
+    thirstPercentage.value = data.water;
+
+    bankBalance.value = data.bank;
+    cashBalance.value = data.cash;
+    dimension.value = data.dimension;
+
+    console.log(`HUD-Data was updated`);
 }
 
 function updateSpeed(speedClient: string) {
@@ -82,21 +124,37 @@ function formatNumberWithThousandsSeparator(number: number) {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    width: 200px;
+    width: 250px;
 }
 
 .hud-item {
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
+
+    padding: 5px;
 }
 
 .hud-label {
     font-weight: bold;
+    font-family: 'Inter';
 }
 
 .hud-value {
     font-size: 20px;
-    font-family: 'Inter';
+}
+
+.hud-progress {
+    width: 200px;
+    background-color: #ccc;
+    height: 20px;
+    margin-top: 2px;
+}
+
+.hud-progress-inner {
+    background-color: #265a96; /* Green color for progress */
+    height: 100%;
+    transition: width 0.3s; /* Add a smooth transition effect for width changes */
+    text-align: center;
 }
 </style>
